@@ -25,6 +25,16 @@
       "presentation": {
         "hidden": true
       }
+    },
+    {
+      "name":"Debug Website",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:23967",
+      "pathMapping": {
+        "/": "${workspaceFolder}/src/site"
+      },
+      "webRoot": "${workspaceFolder}/src/site",
     }
   ],
   "compounds": [

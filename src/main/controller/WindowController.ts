@@ -10,6 +10,7 @@ import { is } from '@electron-toolkit/utils'
 import { EventAttacher } from '../events/EventAttacher'
 import Server from '../class/Server'
 import ApplicationNotInitializedError from '../Errors/ApplicationNotInitializedError'
+import { ContextNotifier } from '../notifier/ContextNotifier'
 
 export default class WindowController {
     _window: BrowserWindow | null = null
@@ -77,6 +78,7 @@ export default class WindowController {
         const setting = await Setting.findOne()
         this._server = new Server(setting?.serverPort || 23967)
         this._server.onStart = this._onServerStarted.bind(this)
+        this._server.onStop = this._onServerStop.bind(this)
     }
 
     async onRunServer() {
@@ -87,7 +89,27 @@ export default class WindowController {
         }
     }
 
+    async onStopServer() {
+        if (this._server) {
+            this._server.stopServer()
+        } else {
+            throw new ApplicationNotInitializedError()
+        }
+    }
+
     _onServerStarted() {
-        this._notifier.notify({ notify: () => ({ channel: 'server-status', body: true }) })
+        this._sendContext()
+    }
+
+    _sendContext() {
+        if (!this._server) {
+            throw new ApplicationNotInitializedError()
+        }
+        const serverStatus = this._server.getServerStatus()
+        this._notifier.notify(new ContextNotifier(serverStatus))
+    }
+
+    _onServerStop() {
+        this._sendContext()
     }
 }

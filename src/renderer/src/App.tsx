@@ -6,31 +6,25 @@ import ServerOffScreen from "./view/ServerOffScreen"
 import Setting from"./setting/setting"
 import useListenIPC from "./hooks/useListenIPC"
 import { useAppDispatch, useAppSelector } from "./app/hook"
-import { setServerState } from "./features/server/serverSlice"
-import useAskIPC from "./hooks/useAskIPC"
+import { setServerData } from "./features/server/serverSlice"
+import { Container } from "@mui/material"
+import { IContext, Listener } from "./app/serverActions"
 
 function App(): JSX.Element
 {
   const [isLoading, setIsLoading] = useState(true)
     const dispatch = useAppDispatch()
-    const {serverRunning} = useAppSelector(state => state.server)
-    const { data: serverConnected } = useListenIPC<boolean>("server-status", false)
-    const {invoke} = useAskIPC()
+    const {running} = useAppSelector(state => state.server)
+    const { data: context } = useListenIPC<IContext>("context", null)
   
   useEffect(() =>
   {
-      //when server state change notify the app
-      dispatch(setServerState(serverConnected || false))
-  }, [serverConnected])
-    
-    useEffect(() =>
+    if (context)
     {
-        //once app load ask the server for the server status
-        invoke<boolean>("server-status").then((status) =>
-        {
-            dispatch(setServerState(status))
-        })
-    }, [])
+      dispatch(setServerData(context.server))
+        
+    }
+  }, [context])
 
   const onLoadingComplete = () =>
   {
@@ -46,7 +40,7 @@ function App(): JSX.Element
   }
   else
   {
-    if (serverRunning)
+    if (running)
     {
       Component = <DashboardScreen />
     }
@@ -57,9 +51,9 @@ function App(): JSX.Element
   }
 
   return (
-    <>
+    <Container>
       {Component}
-    </>
+    </Container>
   )
 }
 

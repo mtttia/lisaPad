@@ -4,7 +4,12 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
     main: {
-        plugins: [externalizeDepsPlugin()]
+        plugins: [externalizeDepsPlugin()],
+        build: {
+            rollupOptions: {
+                external: ['vite']
+            }
+        }
     },
     preload: {
         plugins: [externalizeDepsPlugin()]
@@ -12,8 +17,7 @@ export default defineConfig({
     renderer: {
         resolve: {
             alias: {
-                '@renderer': resolve('src/renderer/src'),
-                '@site': resolve('src/site/src/')
+                '@renderer': resolve('src/renderer/src')
             }
         },
         plugins: [react()]

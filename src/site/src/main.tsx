@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
+import App from '@site/App'
 import "./assets/index.css"
 import { ThemeProvider } from '@emotion/react'
 import { CssBaseline } from '@mui/material'

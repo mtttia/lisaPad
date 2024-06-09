@@ -1,16 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 // Define a type for the slice state
 export interface ServerState {
-    serverRunning: boolean
-    devices: any[]
-    settings: any
+    running: boolean
+    port: number | null
 }
 
 // Define the initial state using that type
 const initialState: ServerState = {
-    serverRunning: false,
-    devices: [],
-    settings: null
+    running: false,
+    port: null
 }
 
 export const serverSlice = createSlice({
@@ -18,19 +16,13 @@ export const serverSlice = createSlice({
     // `createSlice` will infer the state type from the `initialState` argument
     initialState,
     reducers: {
-        setServerState: (state, action: PayloadAction<boolean>) => {
-            state.serverRunning = action.payload
-        },
-        setDevices: (state, action: PayloadAction<any[]>) => {
-            state.devices = action.payload
-        },
-
-        setSettings: (state, action: PayloadAction<any>) => {
-            state.settings = action.payload
+        setServerData: (state, action: PayloadAction<ServerState>) => {
+            state.port = action.payload.port
+            state.running = action.payload.running
         }
     }
 })
 
-export const { setServerState, setDevices, setSettings } = serverSlice.actions
+export const { setServerData } = serverSlice.actions
 
 export default serverSlice.reducer

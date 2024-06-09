@@ -1,12 +1,13 @@
 import { Button } from "@mui/material";
+import useActions from "@renderer/hooks/useActions";
 import useAskIPC from "@renderer/hooks/useAskIPC";
 
 export default function ServerOffScreen(): JSX.Element
 {
-  const {ask} = useAskIPC()
+  const {startServer} = useActions()
   
   const handleStartServer = () =>{
-    ask("start-server")
+    startServer()
   }
 
   return (
