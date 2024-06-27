@@ -1,40 +1,31 @@
-import useSocket from "./hooks/useSocket"
-import { useAppDispatch, useAppSelector } from "@site/app/hook"
-import { setDeviceData } from "./features/DeviceSlice"
-import { Container } from "@mui/material"
+import { useAppSelector } from '@site/app/hook'
+import { Button, Container } from '@mui/material'
+
+import { Outlet, useNavigate } from 'react-router-dom'
+import useActions from './hooks/useActions'
+import Handlers from './components/Handlers'
 
 function App(): JSX.Element {
-  const { connect, on } = useSocket()
-  const dispatch = useAppDispatch()
-  const device = useAppSelector(state => state.device)
+    const waiting = useAppSelector((state) => state.waiting.waiting)
+    const navigate = useNavigate()
+    const { disconnect } = useActions()
 
-  on("connect", () =>
-  {
-    connect()
-  })
-
-  on("new-device-info", (data) => {
-      dispatch(setDeviceData(data))
-  })
-
-  return (
-    <Container>
-      {
-        device.waiting ? (
-          <div>Waiting for device binding</div>
-        ) : (<>{device.associate ? (
-            <div>
-            <div>Device Name: {device.name}</div>
-            <div>Trust: {device.trust ? "Yes" : "No"}</div>
-            <div>Chat: {device.allowChat ? "Yes" : "No"}</div>
-          </div>
-          ) : (
-            <div>Device is not associated</div>
-            )}</>
-        )
-      }
-    </Container>
-  )
+    return (
+        <Container>
+            <Handlers />
+            {waiting ? (
+                <div>Waiting for device binding</div>
+            ) : (
+                <>
+                    <Outlet />
+                    <Button onClick={() => navigate('/overview')}>Overview</Button>
+                    <Button onClick={() => navigate('/chat')}>Chat</Button>
+                    <Button onClick={() => navigate('/track-pad')}>TrackBad</Button>
+                    <Button onClick={() => disconnect()}>Disconnect</Button>
+                </>
+            )}
+        </Container>
+    )
 }
 
-export {App}
+export { App }

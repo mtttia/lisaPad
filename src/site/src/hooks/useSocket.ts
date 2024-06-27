@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import { io } from 'socket.io-client'
-import UAParser from 'ua-parser-js'
 
 const URL = 'http://localhost:23967'
 
@@ -20,19 +19,8 @@ export default function useSocket() {
         socket.emit(eventName, ...args)
     }
 
-    const connect = () => {
-        const parser = new UAParser()
-
-        emit('new-device-info', {
-            deviceName: parser.getOS().name || 'Unknown',
-            browser: parser.getBrowser().name || 'Unknown',
-            os: `${parser.getOS().name} v.${parser.getOS().version}` || 'Unknown'
-        })
-    }
-
     return {
         socket: socket,
-        connect,
         on,
         emit
     }

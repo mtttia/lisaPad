@@ -18,8 +18,8 @@ export class DeviceServerRoute {
 
     emit(channel: string, cod: string, data: any) {
         if (this._routes[channel]) {
-            this._routes[channel].addSTDMiddleware((data, _next) => {
-                this._sockets[cod].emit(channel, data)
+            this._routes[channel].addSTDMiddleware((data: IRouteData) => {
+                this._sockets[data.cod].emit(data.listener, data.data)
             })
             this._routes[channel].onServerToDevice(cod, data)
         }
