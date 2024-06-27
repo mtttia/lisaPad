@@ -10,7 +10,13 @@ export default defineConfig({
         }
     },
     server: {
-        port: 4143
+        port: 4143,
+        proxy: {
+            '/socket.io': {
+                target: 'ws://localhost:4143',
+                ws: true
+            }
+        }
     },
     root: 'src/site',
 

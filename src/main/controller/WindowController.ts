@@ -11,11 +11,18 @@ import { EventAttacher } from '../events/EventAttacher'
 import Server from '../class/Server'
 import ApplicationNotInitializedError from '../Errors/ApplicationNotInitializedError'
 import { ContextNotifier } from '../notifier/ContextNotifier'
+import { Network } from '../class/Network'
+import { UnPairedDevice } from '../interfaces/IDevice'
+import NewDeviceNotifier from '../notifier/NewDeviceNotifier'
+import IReplyToDevice from '../interfaces/IReplyToDevice'
+import DeviceAskToServerNotifier from '../notifier/DeviceAskToServerNotifier'
+import { DeviceServerController } from './DeviceServerController'
 
 export default class WindowController {
     _window: BrowserWindow | null = null
     _notifier: Notifier = new Notifier()
     _server: Server | null = null
+    _deviceServerController: DeviceServerController | null = null
 
     set window(window: BrowserWindow) {
         this._window = window
@@ -55,22 +62,25 @@ export default class WindowController {
         // Load the remote URL for development or the local html file for production.
         if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
             this.window.loadURL(process.env['ELECTRON_RENDERER_URL'])
-            //this.window.webContents.openDevTools()
+            this.window.webContents.openDevTools()
         } else {
             this.window.loadFile(join(__dirname, '../renderer/index.html'))
         }
 
-        this.initialize()
+        this.window.on('show', () => {
+            this.initialize()
+        })
     }
 
     async initialize() {
         EventAttacher.attachEvents(this)
         await Database.checkDB()
-        this.onUpdateDB(await Database.loadData())
+        this.onUpdateDB()
         this._initServer()
     }
 
-    onUpdateDB(data: { devices: Device[]; setting: Setting }) {
+    async onUpdateDB() {
+        const data = await Database.loadData()
         this._notifier.notify(new DBUpdateNotifier(data.devices, data.setting))
     }
 
@@ -79,6 +89,19 @@ export default class WindowController {
         this._server = new Server(setting?.serverPort || 23967)
         this._server.onStart = this._onServerStarted.bind(this)
         this._server.onStop = this._onServerStop.bind(this)
+        this._deviceServerController = new DeviceServerController(
+            this._server.deviceServerRoute,
+            this._onDeviceAskToServer.bind(this)
+        )
+        this.attachDeviceActions()
+    }
+
+    attachDeviceActions() {
+        if (this._deviceServerController) {
+            this._deviceServerController.handleEvent()
+        } else {
+            throw new ApplicationNotInitializedError()
+        }
     }
 
     async onRunServer() {
@@ -97,6 +120,37 @@ export default class WindowController {
         }
     }
 
+    async onUpdateDefaultNetwork(name: string) {
+        const setting = await Database.loadSetting()
+        if (setting) {
+            setting.defaultNetName = name
+            await setting.save()
+            this.onUpdateDB()
+        }
+    }
+
+    async onResponseDevice(id: number, trust: boolean, allowChat: boolean) {
+        const device = await Device.findOne({ where: { id } })
+        if (device) {
+            device.trust = trust
+            device.allowChat = allowChat
+            await device.save()
+            this.onUpdateDB()
+        }
+    }
+
+    async onReplyToDevice(reply: IReplyToDevice) {
+        if (this._deviceServerController) {
+            this._deviceServerController.emit(reply.listener, reply.cod, reply.data)
+        } else {
+            throw new ApplicationNotInitializedError()
+        }
+    }
+
+    async _onDeviceAskToServer(listener: string, cod: string, data: any) {
+        this._notifier.notify(new DeviceAskToServerNotifier(data, cod, listener))
+    }
+
     _onServerStarted() {
         this._sendContext()
     }
@@ -106,10 +160,16 @@ export default class WindowController {
             throw new ApplicationNotInitializedError()
         }
         const serverStatus = this._server.getServerStatus()
-        this._notifier.notify(new ContextNotifier(serverStatus))
+        const network = new Network()
+        this._notifier.notify(new ContextNotifier(serverStatus, network))
     }
 
     _onServerStop() {
         this._sendContext()
+    }
+
+    _onNewDeviceConnected(device: UnPairedDevice) {
+        const newDevNotifier = new NewDeviceNotifier(device)
+        this._notifier.notify(newDevNotifier)
     }
 }

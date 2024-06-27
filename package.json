@@ -29,13 +29,19 @@
         "@mui/material": "^5.15.15",
         "@prisma/client": "^5.12.1",
         "@reduxjs/toolkit": "^2.2.3",
+        "cors": "^2.8.5",
         "electron-updater": "^6.1.1",
         "express": "^4.19.2",
         "http-proxy-middleware": "^3.0.0",
+        "jsonwebtoken": "^9.0.2",
         "prisma": "^5.12.1",
         "react-redux": "^9.1.2",
         "sequelize": "^6.37.3",
-        "sqlite3": "^5.1.7"
+        "socket.io": "^4.7.5",
+        "socket.io-client": "^4.7.5",
+        "sqlite3": "5.1.6",
+        "ua-parser-js": "^1.0.38",
+        "uuid": "^10.0.0"
     },
     "devDependencies": {
         "@electron-toolkit/eslint-config-prettier": "^1.0.1",
@@ -47,7 +53,7 @@
         "@types/react-dom": "^18.2.7",
         "@vitejs/plugin-react": "^4.0.4",
         "electron": "^25.6.0",
-        "electron-builder": "^24.6.3",
+        "electron-builder": "^24.13.3",
         "electron-vite": "^1.0.27",
         "eslint": "^8.47.0",
         "eslint-plugin-react": "^7.33.2",
@@ -57,5 +63,20 @@
         "sequelize-cli": "^6.6.2",
         "typescript": "^5.1.6",
         "vite": "^4.5.3"
+    },
+    "build": {
+        "files": [
+            "build/**/*",
+            "node_modules/sqlite3/**/*"
+        ],
+        "extraResources": [
+            {
+                "from": "node_modules/sqlite3/lib/binding/",
+                "to": "resources/",
+                "filter": [
+                    "**/*"
+                ]
+            }
+        ]
     }
 }

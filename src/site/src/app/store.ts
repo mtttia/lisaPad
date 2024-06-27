@@ -1,9 +1,9 @@
 import { Reducer, configureStore } from '@reduxjs/toolkit'
-import serverReducer, { ServerState } from '../features/server/serverSlice'
+import deviceReducer, { DeviceState } from '@site/features/DeviceSlice'
 
 export const store = configureStore({
     reducer: {
-        server: serverReducer as Reducer<ServerState>
+        device: deviceReducer as Reducer<DeviceState>
     }
 })
 

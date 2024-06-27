@@ -2,6 +2,8 @@ import Device from './Device'
 import Message from './Message'
 import Setting from './Setting'
 import { sequelize } from './Sequelize'
+import { generateRandomString } from '../class/utils'
+import { Optional } from 'sequelize'
 
 export default abstract class Database {
     static async checkDB() {
@@ -22,7 +24,8 @@ export default abstract class Database {
         return Setting.create({
             maxDevice: 2,
             neverTrust: false,
-            serverPort: 23967
+            serverPort: 23967,
+            jwtSecret: generateRandomString(32)
         })
     }
 
@@ -34,7 +37,20 @@ export default abstract class Database {
                 }
             ]
         })
-        const setting = await Setting.findOne()
+        const setting = await this.loadSetting()
         return { devices, setting }
+    }
+
+    static async loadSetting() {
+        let setting = Setting.findOne()
+        if (!setting) {
+            await this.SeedSetting()
+            setting = Setting.findOne()
+        }
+        return setting
+    }
+
+    static async registerDevice(device: Optional<any, string> | undefined): Promise<Device> {
+        return await Device.create(device)
     }
 }

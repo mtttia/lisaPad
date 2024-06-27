@@ -10,6 +10,16 @@
 				"isDefault": true
 			},
 			"problemMatcher": [],
+		},
+		{
+			"type": "shell",
+			"label": "Run Site",
+			"command": "npm run dev:site",
+			"group": {
+				"kind": "none",
+				"isDefault": true
+			},
+			"problemMatcher": [],
 		}
 	]
 }

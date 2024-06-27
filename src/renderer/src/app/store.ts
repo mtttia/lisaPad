@@ -1,9 +1,11 @@
 import { Reducer, configureStore } from '@reduxjs/toolkit'
 import serverReducer, { ServerState } from '../features/server/serverSlice'
+import settingReducer, { SettingState } from '../features/server/settingSlice'
 
 export const store = configureStore({
     reducer: {
-        server: serverReducer as Reducer<ServerState>
+        server: serverReducer as Reducer<ServerState>,
+        settings: settingReducer as Reducer<SettingState>
     }
 })
 
