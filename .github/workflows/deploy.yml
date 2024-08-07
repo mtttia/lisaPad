@@ -22,7 +22,7 @@ jobs:
               run: npm install
 
             - name: Build Vite app for windows
-              run: npm run build:win
+              run: npm run build:win --publish=never
 
             - name: Publish to GitHub Releases
               uses: softprops/action-gh-release@v1
