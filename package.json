@@ -68,7 +68,8 @@
     "build": {
         "files": [
             "build/**/*",
-            "node_modules/sqlite3/**/*"
+            "node_modules/sqlite3/**/*",
+            "out/main/**/*"
         ],
         "extraResources": [
             {
