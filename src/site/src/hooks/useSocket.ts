@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { io } from 'socket.io-client'
 
 const URL = 'http://localhost:23967'

@@ -3,7 +3,7 @@ import useSocket from './useSocket'
 import UAParser from 'ua-parser-js'
 
 export default function useActions() {
-    const { on, emit } = useSocket()
+    const { emit } = useSocket()
     const device = useAppSelector((state) => state.device)
 
     const login = () => {

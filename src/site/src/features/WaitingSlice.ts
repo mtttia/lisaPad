@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 // Define a type for the slice state
 export interface WaitingState {
     waiting: boolean

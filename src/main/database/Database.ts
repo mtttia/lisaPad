@@ -4,6 +4,7 @@ import Setting from './Setting'
 import { sequelize } from './Sequelize'
 import { generateRandomString } from '../class/utils'
 import { Optional } from 'sequelize'
+import DeviceQuery from './sql/DeviceQuery'
 
 export default abstract class Database {
     static async checkDB() {
@@ -53,4 +54,6 @@ export default abstract class Database {
     static async registerDevice(device: Optional<any, string> | undefined): Promise<Device> {
         return await Device.create(device)
     }
+
+    static Device = DeviceQuery
 }

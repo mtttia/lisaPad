@@ -3,7 +3,7 @@ import { IEvent } from './IEvent'
 
 export class StopServerEvent implements IEvent {
     name: string = 'stop-server'
-    handler(windowController: WindowController, event: Electron.IpcMainEvent, args: any[]) {
+    handler(windowController: WindowController, _event: Electron.IpcMainEvent, _args: any[]) {
         windowController.onStopServer()
     }
 }

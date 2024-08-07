@@ -3,7 +3,7 @@ import { IEvent } from './IEvent'
 
 export class ServerStatusEvent implements IEvent {
     name: string = 'start-server'
-    handler(windowController: WindowController, event: Electron.IpcMainEvent, args: any[]) {
+    handler(_windowController: WindowController, _event: Electron.IpcMainEvent, _args: any[]) {
         return false
     }
 }

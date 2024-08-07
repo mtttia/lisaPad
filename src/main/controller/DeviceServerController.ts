@@ -1,6 +1,7 @@
 import Authenticator from '../class/Authenticator'
 import DeviceManager from '../class/DeviceManager'
 import { DeviceServerRoute, IRouteData } from '../class/DeviceServerRoutes'
+import DeviceChangeEvent from '../class/internalEvents/DeviceChangeEvent'
 import Device from '../database/Device'
 import { PairedDevice } from '../interfaces/IDevice'
 
@@ -46,6 +47,7 @@ export class DeviceServerController {
         let pairedDevice = data.data
         if (pairedDevice.associate) {
             const device = await DeviceManager.registerDevice(data.cod, data.data)
+            new DeviceChangeEvent().dispatch()
             token = device.token
         }
         next({

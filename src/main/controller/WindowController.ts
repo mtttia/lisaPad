@@ -17,6 +17,9 @@ import NewDeviceNotifier from '../notifier/NewDeviceNotifier'
 import IReplyToDevice from '../interfaces/IReplyToDevice'
 import DeviceAskToServerNotifier from '../notifier/DeviceAskToServerNotifier'
 import { DeviceServerController } from './DeviceServerController'
+import InternalEventRegistry from '../class/internalEvents/root/InternalEventRegistry'
+import DeviceChangeEvent from '../class/internalEvents/DeviceChangeEvent'
+import NotifyDeviceChangeListener from '../class/internalEvents/NotifyDeviceChangeListener'
 
 export default class WindowController {
     _window: BrowserWindow | null = null
@@ -28,6 +31,11 @@ export default class WindowController {
         this._window = window
         this._notifier.clearNotificationWindows()
         this._notifier.pushNotificationWindow(window)
+
+        InternalEventRegistry.register(
+            DeviceChangeEvent.getEventName(),
+            new NotifyDeviceChangeListener(this._notifier)
+        )
     }
 
     get window(): BrowserWindow | null {
